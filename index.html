@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Tebak Warna</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #83a4d4, #b6fbff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    h1 {
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    #colorBox {
+      width: 200px;
+      height: 200px;
+      border-radius: 15px;
+      margin: 30px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+    .choices {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button {
+      background-color: #fff;
+      color: #333;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      background-color: #d3f1ff;
+      transform: scale(1.05);
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .score {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #333;
+      background-color: #ffffffc2;
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tebak Warna!</h1>
+  <div id="colorBox"></div>
+  <div class="choices" id="choices"></div>
+  <div class="result" id="result"></div>
+  <div class="score">Skor: <span id="score">0</span></div>
+
+  <script>
+    const colorBox = document.getElementById('colorBox');
+    const choicesContainer = document.getElementById('choices');
+    const result = document.getElementById('result');
+    const scoreDisplay = document.getElementById('score');
+    
+    let score = 0;
+    let correctColor = '';
+
+    function generateRandomColor() {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function generateChoices(correct) {
+      let choices = [correct];
+      while (choices.length < 4) {
+        const newColor = generateRandomColor();
+        if (!choices.includes(newColor)) {
+          choices.push(newColor);
+        }
+      }
+      return shuffleArray(choices);
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startGame() {
+      correctColor = generateRandomColor();
+      colorBox.style.backgroundColor = correctColor;
+      const options = generateChoices(correctColor);
+      choicesContainer.innerHTML = '';
+      options.forEach(color => {
+        const btn = document.createElement('button');
+        btn.textContent = color;
+        btn.onclick = () => checkAnswer(color);
+        choicesContainer.appendChild(btn);
+      });
+      result.textContent = '';
+    }
+
+    function checkAnswer(selectedColor) {
+      if (selectedColor === correctColor) {
+        result.textContent = 'Benar!';
+        result.style.color = 'lime';
+        score++;
+      } else {
+        result.textContent = 'Salah!';
+        result.style.color = 'red';
+        score = 0;
+      }
+      scoreDisplay.textContent = score;
+      setTimeout(startGame, 1500);
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
